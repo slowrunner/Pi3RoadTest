@@ -1,0 +1,37 @@
+Test Procedure:
+
+1) Record test audio of 10 phrases of various length (input_file.txt):
+	arecord -f s16_LE -r 16000 test16k.wav
+	Speak: 
+		Hello
+		What Time is it
+		Drive Forward Slowly
+		Who do you think will win the election
+		What is the weather forecast
+		How long have you been running
+		Turn forty five degrees left
+		one two three four five six seven eight nine ten
+		a b c d e f g h i j k l m n o p q r s t u v w x y z
+		Goodbye
+
+2) Run large LM PocketSphinx on the recording in one remote ssh, run top in another (%CPU %Mem)
+	pocketsphinx_continuous -infile test16k.wav 2>&1 | tee ./psphinx.log
+	(note power consumption A during and after reco)
+
+3) Extract Performance Data (xRT)
+	./perf.sh >result_Pi<model>_file.log
+
+4) Extract recognized phrases
+	tail -14 >reco_Pi<model>_file.log
+
+Detailed Test Results:  *****
+
+1) pocketsphinx_continuous -infile test16k.wav 
+Pi B+: 	top 92-98% CPU 17% memory, 0.40A at 5.02V (+0.08A)
+		2 word substitutions, 1 deletion, 2 insertions = 5 errors / 67 words 
+		= 7% Word Error Rate WER
+		5.234 xRT reported Total CPU xRT ( sum fwdtree, fwdflat, and bestpath calculations)
+Pi 3:  top 100% CPU 7% memory, 0.49A (+0.18A)
+		2 word substitutions, 1 deletion, 2 insertions = 5 errors / 67 words 
+		= 7% Word Error Rate WER
+		2.168 xRT reported Total CPU xRT (sum fwdtree, fwdflat, and bestpath)

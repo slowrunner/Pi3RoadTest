@@ -1,0 +1,25 @@
+Notes on Pi3 reco:
+
+Small LM:
+Last four runs: average 82.5% of one core used min: 78% max: 89%
+0 insertion, 0 deletion, 0 substitution = 0% WER
+10 phrase 0.826 xRT
+
+Lowest seen: 52%
+Highest seen: 253%
+
+Did not change the result if used TTS to play results or not.
+Did not change the result if sent output to file. 
+
+
+Large LM 10 phrase file:
+KiB Mem:  883052 total, 132988 idle 170964 running
+100% CPU  7% memory
+2.168 xRT CPU 
+
+2 substitutions, 1 deletion, 2 insertions =5 errors / 67 words 
+= 7% word error rate WER
+
+
+10 phrase grammar test:
+  0 errors

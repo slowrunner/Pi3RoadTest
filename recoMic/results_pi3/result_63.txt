@@ -1,0 +1,6 @@
+Utterances=63
+CpuTime=75.7 seconds
+CPU xRealTime=0.52 or 52% of one core
+Actual Speech=145.577 seconds
+Utterances=189.77 seconds total
+77% of utterances were speech 

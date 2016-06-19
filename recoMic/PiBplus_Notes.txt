@@ -1,0 +1,21 @@
+Notes on Pi B+ reco:
+
+2.943
+2.797
+2.872
+2.789
+2.744
+---
+2.829xRT  2.9x max  2.74x min
+
+126 phrases in corpus
+
+10 phrase small LM test: 9 deletions 4 substitutions 0 additions = 13 errors / 35 words =37%WER  0.45A 90% CPU 5% Memory  3.075 xRT 
+
+10 phrase large LM test: 
+  top 92-98% CPU 17% memory, 0.40A at 5.02V (+0.08A)
+  2 word replacements,1 deletion, 2 insertions = 5 errors / 67 words = 7% Word Error Rate WER
+  5.234 xRT reported Total CPU xRT ( sum fwdtree, fwdflat, and bestpath calculations)
+
+10 phrase Grammar test:
+  1 substitution errors / 35 words = 3% WER

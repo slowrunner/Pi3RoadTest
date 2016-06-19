@@ -1,0 +1,201 @@
+#JSGF V1.0;
+grammar commands;
+
+
+<person> =
+	ALAN	|
+	HANNA	;
+
+<city>	=
+	BOYNTON BEACH ;
+
+<name> = 
+	<person>	|
+	POGO		|
+	[ RASPBERRY ] PI [ ( B PLUS | TWO ) ]	|
+	PI DROID ALPHA	|
+	FACEBOOK 	;
+
+<state> = 
+	LISTENING 	|
+	ON FACEBOOK 	|
+	UP		|
+	RUNNING		;
+
+<condition> =
+	HEAR ME		|
+	UNDERSTAND [ ( ME | THAT ) ] 	;
+
+<object> =
+	A BED TIME	|
+	A WEB SITE	;
+
+
+<action> =
+	DO EMAIL 	|
+	TAKE DICTATION	;
+
+
+<time_question>	 =
+	HOW LONG DO YOUR BATTERIES LAST 	|
+	HOW LONG HAVE YOU BEEN <state>		;
+
+	
+<question> =
+	ARE YOU <state>	|
+	DID YOU <condition>	|
+	DO YOU HAVE <object>	|
+	DO YOU <action>		|
+	HOW ARE YOU PROGRAMMED	|
+	WHAT DID YOU UNDERSTAND |
+	WHAT DO YOU KNOW	|
+	WHAT GOOD ARE YOU	|
+	WHAT IS <person> DOING	|
+	WHAT IS THE WEATHER IN <city>	|
+	WHAT IS YOUR OPERATING SYSTEM	|
+	WHAT IS YOUR PROCESSOR 	|
+	WHAT KIND OF ROBOT ARE YOU	|
+	WHAT LANGUAGES DO YOU KNOW 	|
+	WHAT OPERATING SYSTEM ARE YOU RUNNING	|
+	WHAT SPEECH RECOGNITION PACKAGE ARE YOU RUNNING	|
+	WHAT TEXT TO SPEECH PACKAGE DO YOU USE	|
+	WHATS ON TV TONIGHT	|
+	WHEN DO YOU SLEEP	|
+	WHEN WAS YOUR LAST BACKUP |
+	WHERE DO YOU SLEEP 	|
+	WHERE IS <person>	|
+	WHO MADE YOU		;
+
+ 
+
+<value_question> =
+	HOW MUCH [ FREE ] DISK [ SPACE ] DO YOU HAVE	|
+	HOW MUCH [ FREE ] MEMORY DO YOU HAVE		|
+	HOW OLD ARE YOU					;
+
+
+<imperative_state> =
+	[ ( VERY | VERY VERY ) ] QUIET	;
+	
+
+<direction> =
+	AWAY		|
+	FORWARD		|
+	BACKWARD	|
+	BACK		|
+	<turn_direction> ;
+
+<turn_direction> =
+	LEFT		|
+	RIGHT		;
+
+<angle> = 
+	FORTY FIVE [ DEGREES ] |
+	NINETY [ DEGREES ]		;
+
+		
+<imperative> =
+	BE <imperative_state>	|
+	GO			|
+	GO <direction>		|
+	STOP			|
+	RECORD A MEMO		|
+	START			|
+	TURN <turn_direction>	|
+	DRIVE [ <direction> ]	|
+	MOVE [ <direction> ]	|
+	SPIN [ <turn_direction> ]	|
+	TURN [ <angle> ] <turn_direction> ;
+	
+<non_modifiable_imperative> =
+	WHISPER		|
+	ABOUT FACE	|
+	AT EASE		;
+
+	
+<post_imperative_modifier> =
+	FAST		|
+	SLOW		|
+	SLOWLY		|
+	SLOWER		|
+	FASTER		|
+	QUICKLY		|
+	A LITTLE	;
+
+<when> =
+	IMMEDIATELY	|
+	NOW		;
+
+<modified_imperative> =
+	<imperative> <post_imperative_modifier> ;
+
+
+<cli_command> =
+	SUDO SHUTDOWN MINUS H NOW	|
+	SUDO SHUTDOWN MINUS H PLUS TEN	|
+	SUDO SHUTDOWN MINUS R PLUS TEN	|
+	SUDO REBOOT 			;
+
+
+<robot_name> =
+	POGO 	|
+	PI	;
+
+
+<greeting> =
+	HELLO	;
+
+<farewell> =
+	GOODBYE	|
+	BYE	|
+	GOOD BYE;
+
+<robot_greeting> =
+	<greeting> <robot_name> ;
+
+<robot_farewell> =
+	<farewell> <robot_name> ;
+
+<place> = 
+	COMPUTER	|
+	KITCHEN		|
+	PHONE		;
+
+<location_question> =
+	IS <person> ( AT THE | IN THE ) <place> 	;
+
+
+
+<wx_question> =
+	IS IT GOING TO RAIN	|
+	IS THE SUN OUT		;
+
+<ability_question> =
+	WHAT CAN YOU DO		;
+
+<datetime_question> =
+	WHAT ( DAY | DATE ) IS IT [ TODAY ]	|
+	WHAT TIME IS IT [ NOW ]		;
+
+
+
+
+public <command> =
+	<datetime_question>	|
+	<ability_question>	|
+	<wx_question>		|
+	<location_question>	|
+	<greeting>		|
+	<robot_greeting>	|
+	<farewell>		|
+	<robot_farewell>	|
+	<cli_command>		|
+	<imperative>		|
+	<non_modifiable_imperative>	|
+	<modified_imperative>	|
+	<value_question>	|
+	<question>		|
+	<time_question>		;;
+
+
+

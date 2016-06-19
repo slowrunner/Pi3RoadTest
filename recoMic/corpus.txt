@@ -1,0 +1,126 @@
+
+about face
+Alan
+Are you listening
+Are you on Facebook
+at ease
+Be quiet
+Be very very quiet
+Bye
+Bye Pi
+Bye Pogo
+Did you hear me
+Did you understand that
+Do you do email
+Do you have a bed time
+Do you have a web site
+Do you take dictation
+drive
+drive forward 
+drive forward fast
+drive forward slowly
+Facebook
+forward
+Go
+Go away
+Go backward
+Go backward slowly
+Go fast
+Go faster
+Go forward
+Go forward quickly
+Go forward slowly
+Goodbye
+Good Bye
+Go slow
+Go slower
+Hanna
+Hello
+Hello Pi
+Hello Pogo
+Hi
+Hi Pi
+Hi Pogo
+How are you programmed
+How long do your batteries last
+How long have you been running
+How long have you been up
+How much disk do you have
+How much free disk space
+How much free memory 
+How much memory do you have
+How old are you
+Is Alan at the computer
+Is Alan by the computer
+Is Hanna at the computer
+Is Hanna in the kitchen
+Is it going to rain
+Is the sun out
+left
+Loud
+Louder
+move back a little
+move forward a little
+Phone
+Pi Alpha Droid
+Pogo
+Pogo Stop
+Quiet
+Raspberry Pi
+Raspberry Pi B plus
+Raspberry Pi Three
+Raspberry Pi Two
+Record a memo
+right
+Soft
+Softer
+Softly
+spin
+Start
+Stop
+Stop immediately
+Stop now
+Sudo reboot 
+Sudo Shutdown minus H now
+Sudo Shutdown minus H plus ten
+Sudo Shutdown minus R plus ten
+turn forty five degrees left
+turn forty five degrees right
+Turn left
+Turn left a little
+Turn left slowly
+turn ninety degrees left
+turn ninety degrees right
+Turn right
+Turn right a little
+Turn right slowly
+What can you do
+What day is it
+What day is it today
+What did you understand
+What do you know
+What good are you
+What is Alan doing
+What is Hanna doing
+What is the date
+What is the date today
+What is the time
+What is the weather in Boynton Beach
+What is your operating system
+What is your processor
+What kind of robot are you
+What languages do you know
+What operating system are you running
+Whats on TV tonight
+What speech recognition package are you running
+Whats the weather look like
+What text to speech package do you use
+What time is it
+When do you sleep
+When was your last backup
+Where do you sleep
+Where is Alan
+Where is Hanna
+Which processor do you have
+Whisper
+Who made you

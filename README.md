@@ -3,5 +3,13 @@ Speech Recognition using PocketSphinx on Raspberry Pi3
 
 element14.com awarded me a Raspberry Pi3 for a "Raspberry Pi3 Road Test" 
 
+Short video of each processor running is at: https://vimeo.com/169445418
+
+This report is located at: https://goo.gl/RrGgCm
+
+
 This repository contains the software and result logs.
+
+recoMic/  contains recognition test using pocketsphinx with the microphone
+recoFile/ contains recognition test and results for pocketsphinx with file input
 

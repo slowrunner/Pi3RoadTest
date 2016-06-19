@@ -1,0 +1,60 @@
+Test Procedure:
+
+
+5) Run PocketSphinx from microphone with small LM, speak 10 in-model phrases
+ 	python mymain.py 
+	(note power consumption A during and after program)
+	(note %CPU %Mem from top during program execution)
+	Speak: 
+		Hello
+		What Time is it
+		Drive Forward Slowly
+		How long have you been running
+		Turn forty five degrees left
+		Go backward quickly
+		Is it going to rain
+		Spin
+		Stop now
+		sudo shutdown minus H now
+
+6) Copy term output to LMsmall_Pi<model>.log
+
+7) Extract Performance Data (xRT)
+	./perf.sh >result_Pi<model>_10.txt
+
+8) Run PocketSphinx from microphone with medium JSGF grammar, speak 10 in-grammar phrases.
+	(note power consumption A during and after program)
+	(note %CPU %Mem from top during program execution)
+	Speak: 
+		Hello
+		What Time is it
+		Drive Forward Slowly
+		How long have you been running
+		Turn forty five degrees left
+		Go backward quickly
+		Is it going to rain
+		Spin
+		Stop
+		sudo shutdown minus H now
+
+9) Copy term output to jsgf_Pi<model>.log
+
+
+Detailed Test Results:
+
+2) pocketsphinx python using microphone and small LM
+	Pi B+: 	top 90% CPU 5% memory, 0.45A  (+0.13A)
+		4 word substitutions, 9 deletion, 0 insertions = 13 errors / 35 words 
+		= 37% Word Error Rate WER
+		3.075 xRT reported Total CPU xRT ( sum fwdtree, fwdflat, and bestpath calculations)
+Pi 3:  top 100% CPU 3% memory, 0.49A (+0.18A)
+		0 word substitutions, 0 deletion, 0 insertions = 0 errors / 67 words 
+		= 0% Word Error Rate WER
+		0.826 xRT reported Total CPU xRT (sum fwdtree, fwdflat, and bestpath)  
+
+3) pocketsphinx python using microphone input and medium grammar:
+	Pi B+: 	1 word substitution, 0 deletion, 0 insertions = 1 error / 34 words 
+		= 3% Word Error Rate WER
+
+Pi 3: 	0 word substitutions, 0 deletion, 0 insertions = 0 errors / 34 words 
+		= 0% Word Error Rate WER
