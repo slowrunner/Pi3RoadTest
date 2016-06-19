@@ -11,5 +11,6 @@ This report is located at: https://goo.gl/RrGgCm
 This repository contains the software and result logs.
 
 recoMic/  contains recognition test using pocketsphinx with the microphone
+
 recoFile/ contains recognition test and results for pocketsphinx with file input
 
