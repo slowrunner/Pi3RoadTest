@@ -1,0 +1,356 @@
+
+
+makezine.com  Roomba, I Command Thee: Use Raspberry Pi for Voice Control
+http://makezine.com/projects/use-raspberry-pi-for-voice-control/
+
+
+
+First, go get the packages required for SphinxBase by executing:
+
+sudo apt-get update
+
+sudo apt-get install libasound2-dev autoconf libtool bison \
+
+swig python-dev python-pyaudio
+
+You’ll also need to install some Python libraries for use with our demo application. To do this, you’ll install and use the Python pip command with the following commands:
+
+curl -O https://bootstrap.pypa.io/get-pip.py
+
+sudo python get-pip.py
+
+sudo pip install gevent grequests
+
+TIP: If your connection to the Pi is a bit flaky and prone to disconnects, you can save yourself some heartache by running these commands in a screen session. To do so, run the following before continuing.
+
+sudo apt-get install screen
+
+screen -DR sphinx
+
+If at any stage you get disconnected from your Pi (and it hasn’t restarted) you can run screen -DR sphinx again to reconnect and continue where you left off.
+
+OBTAINING THE SPHINX TOOLS
+Now you can go about getting the SphinxBase package, which is used by PocketSphinx as well as other software in the CMU Sphinx family.
+
+To obtain SphinxBase execute the following commands:
+
+git clone git://github.com/cmusphinx/sphinxbase.git
+
+cd sphinxbase
+
+git checkout 3b34d87
+
+./autogen.sh
+
+make
+
+(At this stage you may want to go make coffee …)
+
+sudo make install
+
+cd ..
+
+You’re ready to move on to PocketSphinx. To obtain PocketSphinx, execute the following commands:
+
+git clone git://github.com/cmusphinx/pocketsphinx.git
+
+cd pocketsphinx
+
+git checkout 4e4e607
+
+./autogen.sh
+
+make
+
+(Time for a second cup of coffee …)
+
+sudo make install
+
+cd ..
+
+To update the system with your new libraries, run sudo ldconfig.
+
+TESTING THE SPEECH RECOGNITION
+Now that you have the building blocks of your speech recognition in place, you’ll want to test that it actually works before continuing.
+
+Now you can run a test of PocketSphinx using pocketsphinx_continuous -inmic yes.
+
+You should see something like the following, which indicates the system is ready for you to start speaking:
+
+Listening...
+
+Input overrun, read calls are too rare (non-fatal)
+
+You can safely ignore the warning. Go ahead and speak!
+
+When you’re finished, you should see some technical information along with PocketSphinx’s best guess as to what you said, and then another READY prompt letting you know it’s ready for more input.
+
+INFO: ngram_search.c(874): bestpath 0.10 CPU 0.071 xRT
+
+INFO: ngram_search.c(877): bestpath 0.11 wall 0.078 xRT
+
+what
+
+READY....
+
+RECO FROM FILE with large LM:
+  arecord -f s16_LE -r 16000 test16k.wav
+  pocketsphinx_continuous -infile test16k.wav 2>&1 | tee ./psphinx.log
+
+  xRT= sum of fwdflat, CPU xRT
+
+--CONTROL ALL THE THINGS--
+For our demo application, I’ve programmed our system to be able to control three separate systems: Philips Hue and Insteon lighting systems, and an iRobot Roomba robot vacuum cleaner. ...
+
+..retrieve the Python source code:
+
+git clone https://github.com/bynds/makevoicedemo
+
+----
+
+USING POCKETSPHINX
+There are several modes that you can configure for PocketSphinx. For example, it can be asked to listen for a specific keyword (it will attempt to ignore everything it hears except the keyword), or it can be asked to use a grammar that you specify (it will try to fit everything it hears into the confines of the grammar). We are using the grammar mode in our example, with a grammar that’s designed to allow us to capture all the commands we’ll be using. The grammar file is specified in JSGF or JSpeech Grammar Format which has a powerful yet straightforward syntax for specifying the speech that it expects to hear in terms of simple rules.
+
+In addition to the grammar file, you’re going to need three more files in order to use PocketSphinx in our application: a dictionary file which will define words in terms of how they sound, a language model file which contains statistics about the words and their order, and an acoustic model which is used to determine how audio correlates with the sounds in words. The grammar file, dictionary, and language model will all be generated specifically for our project, while the acoustic model will be a generic model for U.S. English.
+
+GENERATING THE DICTIONARY
+In order to generate our dictionary, we will be making use of lmtool, the web based tool hosted by CMU specifically for quickly generating these files. The input to lmtool is a corpus file which contains all or most of the sentences that you would like to be able to recognize. In our simple use case, we have the following sentences in our corpus:
+
+turn on the kitchen light
+turn off the kitchen light
+turn on the bedroom light
+turn off the bedroom light
+turn on the roomba
+turn off the roomba
+roomba clean
+roomba go home
+
+You can type these into a text editor and save the file as corpus.txt or you can download a readymade version from the Github repository.
+
+Now that you have your corpus file, go use lmtool. To upload your corpus file, click the Browse button which will bring up a dialog box that allows you to select the corpus file you just created.
+
+Then click the button Compile Knowledge Base. You’ll be taken to a page with links to download the result. You can either download the compressed .tgz file which contains all the files generated or simply download the .dic file labeled Pronunciation Dictionary. Copy this file to the same makevoicedemo directory that was created on the Pi earlier. You can rename the file using the command  mv *.dic dictionary.dic to make it easier to work with.
+
+While you’re at it, download the prebuilt acoustic model from the Sphinx Sourceforge. Once you’ve moved it to the makevoicedemo directory, extract it with:
+
+tar -xvf cmusphinx-en-us-ptm-5.2.tar.gz.
+
+CREATING THE GRAMMAR FILE
+As I mentioned earlier, everything that PocketSphinx hears, it will try and fit into the words of the grammar. Check out how the JSGF format is described in the W3C note. It starts with a declaration of the format followed by a declaration of the grammar name. We simply called ours “commands.”
+
+We have chosen to use three main rules: an action, an object, and a command. For each rule, you’ll define “tokens” which are what you expect the user to say. For example, the two tokens for our action rule are TURN ON and TURN OFF. We therefore represent the rule as:
+
+
+
+<action> = TURN ON  |
+
+TURN OFF ;
+
+
+Similarly the _object_ rule we define as:
+
+<object> =  KITCHEN LIGHT|
+
+BEDROOM LIGHT|
+
+ROOMBA       ;
+
+
+Finally, to demonstrate that we can nest rules or create them with explicit tokens, we define a command as:
+
+public <command> = <action> THE <object>  |
+
+ROOMBA CLEAN           |
+
+ROOMBA GO HOME         ;
+
+
+Notice the public keyword in front of the <command>. This allows us to use the <command> rule by importing it into other grammar files in the future.
+
+INITIALIZING THE DECODER
+We are using Python as our programming language because it is easy to read, powerful, and thanks to the foresight of the PocketSphinx developers, it’s also very easy to use with PocketSphinx.
+
+The main workhorse when recognizing speech with PocketSphinx is the decoder. In order to use the decoder we must first set a config for the decoder to use.
+
+from pocketsphinx import *
+
+hmm = 'cmusphinx-5prealpha-en-us-ptm-2.0/'
+
+dic = 'dictionary.dic'
+
+grammar = 'grammar.jsgf'
+
+config = Decoder.default_config()
+
+config.set_string('-hmm', hmm)
+
+config.set_string('-dict', dic)
+
+config.set_string('-jsgf', grammar)
+
+Once this is done, initializing a decoder is as simple as decoder = Decoder(config).
+
+For the example application, we’re using the pyAudio library to get the user’s speech from the microphone for processing by PocketSphinx. The specifics of this library are less important for our purposes (investigating speech recognition) and we will therefore simply take it for granted that pyAudio works as advertised.
+
+The specifics of obtaining the decoder’s text output are a bit complex, however the basic process can be distilled down to the following steps.
+
+
+\# Start an 'utterance'
+
+decoder.start_utt()
+
+\# Process a soundbite
+
+decoder.process_raw(soundBite, False, False)
+
+\# End the utterance when the user finishes speaking
+
+decoder.end_utt()
+
+\# Retrieve the hypothesis (for what was said)
+
+hypothesis = decoder.hyp()
+
+\# Get the text of the hypothesis
+
+bestGuess = hypothesis.hypstr
+
+\# Print out what was said
+
+print 'I just heard you say:"{}"'.format(bestGuess)
+
+Those interested in learning more about the gritty details of this process should turn their attention to the pocketSphinxListener.py code from the example project.
+
+There are a lot of different configuration parameters that you can experiment with, and as previously mentioned, other modes of recognition to try. For instance, investigate the -allphone_ci PocketSphinx configuration option and its impact on decoding accuracy. Or try keyword spotting for activating a light. Or try a statistical language model, like the one that was generated when we were using the lmtool earlier, instead of a grammar file. As a practitioner you can experiment almost endlessly to explore the fringes of what’s possible. One thing you’ll quickly notice is that PocketSphinx is an actively developed research system and this will sometimes mean you need to rewrite your application to match the new APIs and function names.
+
+
+====== alan =====
+sudo apt-get install alsa-tools alsa-utils
+
+sudo nano /usr/share/alsa/alsa.conf
+(replace all lines like pcm.front cards.pcm.front <-- pcm.front cards.pcm.default )
+
+...
+pcm.front cards.pcm.default
+pcm.rear cards.pcm.default
+pcm.center_lfe cards.pcm.default
+pcm.side cards.pcm.default
+pcm.surround21 cards.pcm.default
+pcm.surround40 cards.pcm.default
+pcm.surround41 cards.pcm.default
+pcm.surround50 cards.pcm.default
+pcm.surround51 cards.pcm.default
+pcm.surround71 cards.pcm.default
+pcm.iec958 cards.pcm.default
+pcm.spdif cards.pcm.default
+pcm.hdmi cards.pcm.default
+pcm.dmix cards.pcm.default
+pcm.dsnoop cards.pcm.default
+pcm.modem cards.pcm.default
+pcm.phoneline cards.pcm.default
+
+...
+(cntl-o,enter,cntl-x)
+
+then 
+sudo alsactl init
+
+========= mymain.py ========
+# The following import will allow us to view exceptions with a good level of detail in the case of something unexpected.
+import sys, traceback
+
+# time package has a sleep(seconds) func
+import time
+
+# import subprocess package to run festival tts
+import subprocess
+
+# This import will give us our wrapper for the Pocketsphinx library which we can use to get the voice commands from the 
+# user.
+from pocket_sphinx_listener import PocketSphinxListener
+
+# Commands in the grammar
+#   turn on the kitchen light
+#   turn off the kitchen light
+#   turn on the bedroom light
+#   turn off the bedroom light
+#   turn on the roomba
+#   turn off the roomba
+#   roomba clean
+#   roomba go home
+
+
+def runMyMain():
+
+    # Now we set up the voice recognition using Pocketsphinx from CMU Sphinx.
+    pocketSphinxListener = PocketSphinxListener()
+
+    # We want to run forever, or until the user presses control-c, whichever comes first.
+    while True:
+        try:
+            command = pocketSphinxListener.getCommand().lower()
+
+ #   for a grammar that looks like TURN <state> <device>
+ #           if command.startswith('turn'):
+ #               onOrOff = command.split()[1]
+ #               deviceName = ''.join(command.split()[2:])
+ #               do something   
+ #   for a grammar that looks like ROOMBA <action>
+ #           elif command.startswith('roomba'):
+ #               action = ' '.join(command.split()[1:])
+ #               if action == 'clean':
+ #                   roomba.clean()
+ #               if action == 'go home':
+ #                   roomba.goHome()
+
+
+        # speak what was heard
+           filename = '_tmp.txt'
+	    file=open(filename,'w')
+	    file.write(command)
+	    file.close()
+	    subprocess.call('festival --tts '+filename, shell=True)
+	    subprocess.call('rm -f '+filename, shell=True)
+ 
+        # This will allow us to be good cooperators and sleep for a second.
+            print "I'm thinking now"
+	    time.sleep(1)
+
+        except (KeyboardInterrupt, SystemExit):
+            print 'Goodbye.'
+            sys.exit()
+        except Exception as e:
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_exception(exc_type, exc_value, exc_traceback,
+                                      limit=2,
+                                      file=sys.stdout)
+            sys.exit()
+
+
+runMyMain()
+================
+
+In lm mode log shows performance information (latest psphinx supposedly will show for grammar mode also).
+
+For individual or TOTAL:
+Add up fwdtree + fwdflat + bestpath CPU time = CPU time spent recognizing
+Add up fwdtree + fwdflat + bestpath xRT (<1 e.g. 0.52 means 1s of audio takes 0.52 seconds of CPU time, or 0.52% of one core to perform the reco.
+(To calculate length of audio processed divide total CPU time by percent of CPU)
+
+on Pi 3:  (126 phrase corpus using 136 words, 278 bi-grams, 295 tri-grams)
+1.2GHz single core processing
+
+64 phrases:  
+   Total CPU: 75.7s  0.52 xRT  146s audio
+   Total Wall: 190s  1.3  xRT  (146s audio) - 
+         Wall time includes startup, tear down, output and logging.
+         Reco from mic cannot be faster than realtime.
+   0.52 xRT CPU means 52% of one core used by ASR.
+
+
+
+
+
+
+
+
